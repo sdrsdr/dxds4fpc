@@ -50,16 +50,18 @@ Function FindDeviceByName (cat:TGUID; name:String):IBaseFilter;
 
 
 const olepro32 = 'olepro32.dll';
-  
-  
-  function OleCreatePropertyFrame(hwndOwner: HWnd; x, y: Integer;
+
+function OleCreatePropertyFrame(hwndOwner: HWnd; x, y: Integer;
     lpszCaption: POleStr; cObjects: Integer; pObjects: Pointer;
     cPages: Integer; pPageCLSIDs: Pointer; lcid: TLCID; dwReserved: Longint;
     pvReserved: Pointer): HResult; stdcall external olepro32 name 'OleCreatePropertyFrame';
-
-
+{  
+type //exports
+	TFilterState=DirectShow.TFilterState;
+}
 var
 	LastError:String='';
+	
 implementation
 uses Contnrs,sysutils,variants;
 
@@ -356,6 +358,7 @@ end;
 function StopGraph (gb_gb:IGraphBuilder; var isRuning:boolean):Boolean;
 var
 	mc:IMediaControl;
+	fs:TFilterState;
 begin
 	if gb_gb=nil then begin
 		Result:=false;
@@ -372,7 +375,7 @@ begin
 		Result:=false;
 		exit;
 	end;
-	isRuning:=Failed (mc.Stop);
+	isRuning:=Failed (mc.StopWhenReady);
 	mc:=nil;
 	result:=not isRuning;
 end;
